@@ -12,7 +12,7 @@ class TransferTlgToTorCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('core:transfer_tlg_to_toronto');
+            ->setName('core:transfer_tlg_to_tor');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -27,13 +27,13 @@ class TransferTlgToTorCommand extends ContainerAwareCommand
             $global_id = $user->getGlobalUserId();
             $value = $user->toArray();
 
-            $this->getContainer()->get('database_switcher')->changeDatabase('toronto');
+            $this->getContainer()->get('database_switcher')->changeDatabase('tor');
 
             if (!UserQuery::create()->findOneByGlobalUserId($global_id))
             {
                 $this->getContainer()->get('sqs')->sendMessage('transfer-student', serialize([
                     'oldDB' => 'tlg',
-                    'newDB' => 'toronto',
+                    'newDB' => 'tor',
                     'data' => serialize($value),
                 ]));
             }
